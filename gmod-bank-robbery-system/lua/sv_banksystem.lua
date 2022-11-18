@@ -3,6 +3,11 @@ hook.Add("PlayerDeath", "RemoveRaidTimer_Death", function(ply)
 
     for k, v in ipairs(ents.FindByClass("bank_loot")) do
         v:SetNWBool("ActiveRaid", false)
+        v:SetNWBool("BankVaultCooldownActive", true)
+        v:setTotalMoney(100000)
+        timer.Create("BankVaultCooldownTimer", 1800, 0, function()
+            v:SetNWBool("BankVaultCooldownActive", false)
+        end)
     end
 
     WKBankLootSystem.RunEveryoneConsole("stopsound")
@@ -15,6 +20,11 @@ hook.Add("PlayerChangedTeam", "RemoveRaidTimer_TeamChange", function(ply)
 
     for k, v in ipairs(ents.FindByClass("bank_loot")) do
         v:SetNWBool("ActiveRaid", false)
+        v:SetNWBool("BankVaultCooldownActive", true)
+        v:setTotalMoney(100000)
+        timer.Create("BankVaultCooldownTimer", 1800, 0, function()
+            v:SetNWBool("BankVaultCooldownActive", false)
+        end)
     end
 
     WKBankLootSystem.RunEveryoneConsole("stopsound")
@@ -27,6 +37,11 @@ hook.Add("playerArrested", "RemoveRaidTimer_Arrested", function(ply)
 
     for k, v in ipairs(ents.FindByClass("bank_loot")) do
         v:SetNWBool("ActiveRaid", false)
+        v:SetNWBool("BankVaultCooldownActive", true)
+        v:setTotalMoney(100000)
+        timer.Create("BankVaultCooldownTimer", 1800, 0, function()
+            v:SetNWBool("BankVaultCooldownActive", false)
+        end)
     end
 
     WKBankLootSystem.RunEveryoneConsole("stopsound")
