@@ -1,8 +1,9 @@
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 include("shared.lua")
+include("config.lua")
 
-WKBankLootSystem = {}
+WKBankLootSystem = WKBankLootSystem or {}
 
 function ENT:Initialize()
     self:SetModel("models/props/cs_assault/moneypallet.mdl")
@@ -16,7 +17,7 @@ function ENT:Initialize()
         physics:EnableMotion(true)
     end
 
-    self:SetNWInt("BankVaultTotalMoney", 100000)
+    self:SetNWInt("BankVaultTotalMoney", WKBankLootSystem.MaxReward)
 end
 
 local function NotifyAllCops(msg)
@@ -35,7 +36,7 @@ local function NotifyAllCops(msg)
 end
 
 local function GetServerCopCount()
-    return #team.GetPlayers(TEAM_POLICE) + #team.GetPlayers(TEAM_RECON) + #team.GetPlayers(TEAM_CHIEF)
+    return table.Count(player.GetAll(), function(ply) return WKBankLootSystem.AllowedJobs(ply:Team()) end)
 end
 
 function WKBankLootSystem.RunEveryoneConsole(msg)
@@ -44,56 +45,40 @@ function WKBankLootSystem.RunEveryoneConsole(msg)
     end
 end
 
-local allowedJobs = {
-    [TEAM_PROTHIEF] = true,
-    [TEAM_THIEF] = true,
-    [TEAM_HACKER] = true,
-    [TEAM_FREERUNNER] = true
-}
-local debugMode = false
--- local disabled = true
-
 function ENT:Use(ply)
-    -- if not ply:IsOwner() then 
-    --     DarkRP.notify(ply, 0, 4, "Bank vault is disabled until further notice.")
+    if not WKBankLootSystem.AllowedJobs[ply:Team()] then
+        DarkRP.notify(ply, 0, 4, WKBankLootSystem.Phrases.INCORRECT_JOB)
+        return
+    end
 
-    --     return
-    -- end
-
-    if GetServerCopCount() < 3 and not debugMode then
-        DarkRP.notify(ply, 0, 4, "Must be atleast 3 cops online to rob the bank.")
-
+    if GetServerCopCount() < WKBankLootSystem.OnlineCops then
+        DarkRP.notify(ply, 0, 4, string.format(WKBankLootSystem.Phrases.TOOFEWCOPS, WKBankLootSystem.OnlineCops))
         return
     end
 
     if self:IsActiveRaid() or self:IsOnCoolDown() then return end
 
-    if not allowedJobs[ply:Team()] and not debugMode then
-        DarkRP.notify(ply, 0, 4, "You are the incorrect job for this.")
-
-        return
+    DarkRP.notify(ply, 0, 4, WKBankLootSystem.Phrases.STARTED)
+    if WKBankLootSystem.NotifyCops then
+        NotifyAllCops(WKBankLootSystem.Phrases.BANKRAID)
     end
-
-    DarkRP.notify(ply, 0, 4, "You have started a bank raid!")
-    NotifyAllCops("The bank is being raided! Go try and save it from those criminals!")
+    
     self:EmitSound("ambient/alarms/alarm1.wav")
     self:SetNWBool("ActiveRaid", true)
     ply:SetNWBool("ActiveBankRaid", true)
-    hook.Run("WKBankRobberyStarted", ply, self)
 
-    timer.Create("BankVaultRaidTimer", 300, 0, function()
+    timer.Create("BankVaultRaidTimer", WKBankLootSystem.RobberyTime, 0, function()
         if not self:IsActiveRaid() then return end
         self:SetNWBool("ActiveRaid", false)
         ply:SetNWBool("ActiveBankRaid", false)
-        self:setTotalMoney(100000)
+        self:setTotalMoney(WKBankLootSystem.MaxReward)
         WKBankLootSystem.RunEveryoneConsole("stopsound")
-        local winAmount = self:TotalMoney() / 1.3
-        DarkRP.notify(ply, 0, 4, "You have been paid " .. DarkRP.formatMoney(math.floor(winAmount)) .. " for successfully robbing the bank vault!")
-        ply:addMoney(winAmount)
+        DarkRP.notify(ply, 0, 4, string.format(WKBankLootSystem.Phrases.PAID, DarkRP.formatMoney(math.floor(self:TotalMoney()))))
+        ply:addMoney(self:TotalMoney())
         hook.Run("WKBankRobberyEnded", ply, self, amount)
         self:SetNWBool("BankVaultCooldownActive", true)
 
-        timer.Create("BankVaultCooldownTimer", 1800, 0, function()
+        timer.Create("BankVaultCooldownTimer", WKBankLootSystem.RobberyCooldown, 0, function()
             self:SetNWBool("BankVaultCooldownActive", false)
         end)
     end)
@@ -110,18 +95,16 @@ function ENT:Think()
 end
 
 function ENT:OnTakeDamage(damageInfo)
-    -- print(damageInfo:GetDamage() * 60)
     if not self:IsActiveRaid() then return end
-    local randomDamage = math.random(1000, 4500) -- 1000, 4500
+    local randomDamage = math.random(1000, 4500)
     self:setTotalMoney(self:GetNWInt("BankVaultTotalMoney") - randomDamage)
 
     if self:TotalMoney() <= 0 then
         self:SetNWBool("BankVaultCooldownActive", true)
-
         self:SetNWBool("ActiveRaid", false)
-        self:setTotalMoney(100000)
-        -- hook.Run("WKBankRobberyEnded", self)
+        self:setTotalMoney(WKBankLootSystem.MaxReward)
         WKBankLootSystem.RunEveryoneConsole("stopsound")
+
         timer.Create("BankVaultCooldownTimer", 1800, 0, function()
             self:SetNWBool("BankVaultCooldownActive", false)
         end)
