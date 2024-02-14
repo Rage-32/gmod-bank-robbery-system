@@ -1,21 +1,9 @@
 include("shared.lua")
 
-surface.CreateFont("TheDefaultSettings", {
+surface.CreateFont("BANK_SYSTEM.Font", {
 	font = "Arial", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
 	extended = false,
 	size = 85,
-	weight = 500,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
 })
 
 local function formatRelativeTime(seconds)
@@ -48,19 +36,19 @@ function ENT:Draw()
 
     if self:IsActiveRaid() then
         draw.RoundedBox(0, -270, 100 / 100 - 1200, 550, posy, Color(10, 10, 10, 230))
-        draw.SimpleText("Active Raid", "TheDefaultSettings", 0, 100 / 100 - 1135, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-        draw.SimpleText(formatRelativeTime(self:GetActiveRaidTimer()), "TheDefaultSettings", 0, 100 / 100 - 1050, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText("Active Raid", "BANK_SYSTEM.Font", 0, 100 / 100 - 1135, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(formatRelativeTime(self:GetActiveRaidTimer()), "BANK_SYSTEM.Font", 0, 100 / 100 - 1050, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
     if self:IsOnCoolDown() then
         draw.RoundedBox(0, -350, 100 / 100 - 1200, 715, posy, Color(10, 10, 10, 230))
-        draw.SimpleText("Robbery Cooldown", "TheDefaultSettings", 0, 100 / 100 - 1135, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText("Robbery Cooldown", "BANK_SYSTEM.Font", 0, 100 / 100 - 1135, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         local length = self:GetCoolDown()
-        draw.SimpleText(formatRelativeTime(length), "TheDefaultSettings", 0, 100 / 100 - 1050, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(formatRelativeTime(length), "BANK_SYSTEM.Font", 0, 100 / 100 - 1050, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
-    draw.SimpleText(DarkRP.formatMoney(self:GetNWInt("BankVaultTotalMoney")), "TheDefaultSettings", 0, 100 / 100 - posx, Color(0, 230, 64), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    draw.SimpleText(DarkRP.formatMoney(self:GetNWInt("BankVaultTotalMoney")), "BANK_SYSTEM.Font", 0, 100 / 100 - posx, Color(0, 230, 64), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     posx = posx + 90
-    draw.SimpleText("Bank Vault", "TheDefaultSettings", 0, 100 / 100 - posx, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    draw.SimpleText("Bank Vault", "BANK_SYSTEM.Font", 0, 100 / 100 - posx, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     cam.End3D2D()
 end

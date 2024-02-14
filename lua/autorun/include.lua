@@ -1,5 +1,13 @@
+BANK_SYSTEM = BANK_SYSTEM or {}
+
+function BANK_SYSTEM.Print(msg)
+    MsgC(Color(32, 154, 214), "Bank Robbery System | ", color_white, msg, "\n")
+end
+
+BANK_SYSTEM.Print("Initializing...")
+
 if SERVER then
     include("sv_banksystem.lua")
-    include("sh_banksystem.lua")
-    BANK_SYSTEM.Print("Loaded Server Core Files")
 end
+
+BANK_SYSTEM.Print("Finished loading!")
