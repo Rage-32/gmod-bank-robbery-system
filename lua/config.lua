@@ -4,8 +4,8 @@ BANK_SYSTEM.Config.MaxReward = 10000 -- Max reward a player can get from robbing
 
 BANK_SYSTEM.Config.OnlineCops = 0 -- How many cops have to be online in order for a player to start a robbery
 
-BANK_SYSTEM.Config.RobberyTime = 180 -- Time until the bank robbery ends
-BANK_SYSTEM.Config.RobberyCooldown = 900 -- Time until another robbery can be started
+BANK_SYSTEM.Config.RobberyTime = 5 -- Time until the bank robbery ends
+BANK_SYSTEM.Config.RobberyCooldown = 10 -- Time until another robbery can be started
 
 BANK_SYSTEM.Config.NotifyCops = true -- Notify all online cops that the bank is being robbed
 BANK_SYSTEM.Config.EndOnDeath = true -- End the robbery if the person who started it dies?
