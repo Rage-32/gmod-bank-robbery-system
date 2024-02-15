@@ -7,11 +7,12 @@ Built originally for my DarkRP server, I've decided to publish this as open sour
 **Functionality**
 - While an active robbery is occurring, the more the money is damaged/shot, the less the player gets when payed out.
 - Bank robbery fails when player goes to jail, gets arrested, or dies.
-- All cops are notified
-- Much more! 
+- All cops are notified.
+- Much more!
+
 **Pros**
 - Easy configurable
- - Configure cooldown, raid timer, maximum amount the vault can carry, total cops, allowed jobs, and more!
+  - Configure cooldown, raid timer, maximum amount the vault can carry, total cops, allowed jobs, and more!
 - Fast & easy installation [drag n' drop]
 - Quick support
 
