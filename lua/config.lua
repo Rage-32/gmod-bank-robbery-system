@@ -1,24 +1,25 @@
 BANK_SYSTEM.Config = {}
 
-BANK_SYSTEM.Config.MaxReward = 10000 -- Max reward a player can get from robbing a bank
+BANK_SYSTEM.Config.MaxReward = 100000 -- Max reward a player can get from robbing a bank
 
-BANK_SYSTEM.Config.OnlineCops = 0 -- How many cops have to be online in order for a player to start a robbery
+BANK_SYSTEM.Config.OnlineCops = 5 -- How many cops have to be online in order for a player to start a robbery
 
-BANK_SYSTEM.Config.RobberyTime = 5 -- Time until the bank robbery ends
-BANK_SYSTEM.Config.RobberyCooldown = 10 -- Time until another robbery can be started
+BANK_SYSTEM.Config.RobberyTime = 300 -- Seconds until the bank robbery ends 
+BANK_SYSTEM.Config.RobberyCooldown = 600 -- Seconds until another robbery can be started
 
 BANK_SYSTEM.Config.NotifyCops = true -- Notify all online cops that the bank is being robbed
 BANK_SYSTEM.Config.EndOnDeath = true -- End the robbery if the person who started it dies?
 BANK_SYSTEM.Config.EndOnChangeTeam = true -- End the robbery if the person who started it switches teams?
 BANK_SYSTEM.Config.EndOnArrest = true -- End the robbery if the person who started it gets arrested?
 
-BANK_SYSTEM.Config.EndCooldownCommandEnabled = true -- Enable/disable the end cooldown command
-BANK_SYSTEM.Config.EndCooldownCommand = "endcooldown" -- Command to end the cooldown (!!DONT ADD / or !, IT IS AUTOMATICALLY ADDED!!)
+BANK_SYSTEM.EndCooldownCommandEnabled = true -- Enable/disable the end cooldown command
+BANK_SYSTEM.EndCooldownCommand = "/endcooldown" -- Command to end the cooldown
+BANK_SYSTEM.EndCooldownCommandUsergroups = {
+    ["superadmin"] = true
+}
 
 BANK_SYSTEM.Config.AllowedJobs = { -- Allowed jobs to start a robbery
-    [TEAM_CITIZEN] = true,
-    [TEAM_GANG] = true,
-    [TEAM_MOB] = true,
+    [TEAM_CITIZEN] = true
 }
 
 BANK_SYSTEM.Config.Phrases = {

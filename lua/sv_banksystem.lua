@@ -53,7 +53,7 @@ hook.Add("playerArrested", "RemoveRaidTimer_Arrested", function(ply)
 end)
 
 hook.Add("PlayerSay", "BankRobberyEndCooldown", function(ply, text)
-    if (string.lower(text) == "/" .. BANK_SYSTEM.EndCooldownCommand) or (string.lower(text) == "!" .. BANK_SYSTEM.EndCooldownCommand) then
+    if (string.lower(text) == string.lower(WKBankLootSystem.EndCooldownCommand)) and (BANK_SYSTEM.EndCooldownCommandUsergroups[ply:GetUserGroup()]) then
         if not BANK_SYSTEM.EndCooldownCommandEnabled then return end
         for k, v in ipairs(ents.FindByClass("bank_loot")) do
             v:SetNWBool("BankVaultCooldownActive", false)

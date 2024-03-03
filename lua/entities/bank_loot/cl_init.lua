@@ -1,7 +1,7 @@
 include("shared.lua")
 
 surface.CreateFont("BANK_SYSTEM.Font", {
-	font = "Arial", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
+	font = "Arial",
 	extended = false,
 	size = 85,
 })
