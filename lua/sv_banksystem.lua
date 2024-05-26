@@ -1,15 +1,21 @@
+local endBankRobbery = function()
+    for k, v in ipairs(ents.FindByClass("bank_loot")) do
+        v:SetIsActiveRaid(false)
+        v:SetIsCoolDown(true)
+        v:SetTotalMoney(BANK_SYSTEM.Config.MaxReward)
+
+        timer.Create("BankVaultCooldownTimer", BANK_SYSTEM.Config.RobberyCooldown, 0, function()
+            if (not IsValid(v)) then return end
+            v:SetIsCoolDown(false)
+        end)
+    end
+end
+
 hook.Add("PlayerDeath", "RemoveRaidTimer_Death", function(ply)
     if not ply:GetNWBool("ActiveBankRaid") then return end
     if not BANK_SYSTEM.Config.EndOnDeath then return end
 
-    for k, v in ipairs(ents.FindByClass("bank_loot")) do
-        v:SetNWBool("ActiveRaid", false)
-        v:SetNWBool("BankVaultCooldownActive", true)
-        v:setTotalMoney(BANK_SYSTEM.Config.MaxReward)
-        timer.Create("BankVaultCooldownTimer", BANK_SYSTEM.Config.RobberyCooldown, 0, function()
-            v:SetNWBool("BankVaultCooldownActive", false)
-        end)
-    end
+    endBankRobbery()
 
     BANK_SYSTEM.RunEveryoneConsole("stopsound")
     ply:SetNWBool("ActiveBankRaid", false)
@@ -20,14 +26,7 @@ hook.Add("PlayerChangedTeam", "RemoveRaidTimer_TeamChange", function(ply)
     if not ply:GetNWBool("ActiveBankRaid") then return end
     if not BANK_SYSTEM.Config.EndOnChangeTeam then return end
 
-    for k, v in ipairs(ents.FindByClass("bank_loot")) do
-        v:SetNWBool("ActiveRaid", false)
-        v:SetNWBool("BankVaultCooldownActive", true)
-        v:setTotalMoney(BANK_SYSTEM.Config.MaxReward)
-        timer.Create("BankVaultCooldownTimer", BANK_SYSTEM.Config.RobberyCooldown, 0, function()
-            v:SetNWBool("BankVaultCooldownActive", false)
-        end)
-    end
+    endBankRobbery()
 
     BANK_SYSTEM.RunEveryoneConsole("stopsound")
     ply:SetNWBool("ActiveBankRaid", false)
@@ -38,14 +37,7 @@ hook.Add("playerArrested", "RemoveRaidTimer_Arrested", function(ply)
     if not ply:GetNWBool("ActiveBankRaid") then return end
     if not BANK_SYSTEM.EndOnArrest then return end
 
-    for k, v in ipairs(ents.FindByClass("bank_loot")) do
-        v:SetNWBool("ActiveRaid", false)
-        v:SetNWBool("BankVaultCooldownActive", true)
-        v:setTotalMoney(BANK_SYSTEM.MaxReward)
-        timer.Create("BankVaultCooldownTimer", BANK_SYSTEM.RobberyCooldown, 0, function()
-            v:SetNWBool("BankVaultCooldownActive", false)
-        end)
-    end
+    endBankRobbery()
 
     BANK_SYSTEM.RunEveryoneConsole("stopsound")
     ply:SetNWBool("ActiveBankRaid", false)
@@ -53,10 +45,11 @@ hook.Add("playerArrested", "RemoveRaidTimer_Arrested", function(ply)
 end)
 
 hook.Add("PlayerSay", "BankRobberyEndCooldown", function(ply, text)
-    if (string.lower(text) == string.lower(WKBankLootSystem.EndCooldownCommand)) and (BANK_SYSTEM.EndCooldownCommandUsergroups[ply:GetUserGroup()]) then
+    if (string.lower(text) == string.lower(BANK_SYSTEM.EndCooldownCommand)) and (BANK_SYSTEM.EndCooldownCommandUsergroups[ply:GetUserGroup()]) then
         if not BANK_SYSTEM.EndCooldownCommandEnabled then return end
         for k, v in ipairs(ents.FindByClass("bank_loot")) do
-            v:SetNWBool("BankVaultCooldownActive", false)
+            v:SetIsCoolDown(false)
+            v:SetCoolDown(0)
         end
         DarkRP.notify(ply, 0, 4, "You have ended all bank robbery cooldowns.")
         return ""

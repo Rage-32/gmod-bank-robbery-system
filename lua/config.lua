@@ -18,6 +18,10 @@ BANK_SYSTEM.EndCooldownCommandUsergroups = {
     ["superadmin"] = true
 }
 
+BANK_SYSTEM.Config.CopJobs = { -- Jobs that count as police (count towards BANK_SYSTEM.Config.OnlineCops)
+    [TEAM_POLICE] = true
+}
+
 BANK_SYSTEM.Config.AllowedJobs = { -- Allowed jobs to start a robbery
     [TEAM_CITIZEN] = true
 }

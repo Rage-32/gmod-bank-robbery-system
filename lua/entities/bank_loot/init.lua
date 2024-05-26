@@ -14,8 +14,8 @@ function ENT:Initialize()
         physics:Wake()
         physics:EnableMotion(true)
     end
-
-    self:SetNWInt("BankVaultTotalMoney", BANK_SYSTEM.Config.MaxReward)
+    
+    self:SetTotalMoney(BANK_SYSTEM.Config.MaxReward)
 end
 
 local function NotifyAllCops(msg)
@@ -34,7 +34,7 @@ local function NotifyAllCops(msg)
 end
 
 local function GetServerCopCount()
-    return table.Count(player.GetAll(), function(ply) return BANK_SYSTEM.Config.AllowedJobs(ply:Team()) end)
+    return table.Count(player.GetAll(), function(ply) return BANK_SYSTEM.Config.CopJobs(ply:Team()) end)
 end
 
 function BANK_SYSTEM.RunEveryoneConsole(msg)
@@ -54,7 +54,7 @@ function ENT:Use(ply)
         return
     end
 
-    if self:IsActiveRaid() or self:IsOnCoolDown() then return end
+    if self:GetIsActiveRaid() or self:GetIsCoolDown() then return end
 
     DarkRP.notify(ply, 0, 4, BANK_SYSTEM.Config.Phrases.STARTED)
     if BANK_SYSTEM.Config.NotifyCops then
@@ -62,49 +62,55 @@ function ENT:Use(ply)
     end
     
     self:EmitSound("ambient/alarms/alarm1.wav")
-    self:SetNWBool("ActiveRaid", true)
+    self:SetIsActiveRaid(true)
     ply:SetNWBool("ActiveBankRaid", true)
 
     timer.Create("BankVaultRaidTimer", BANK_SYSTEM.Config.RobberyTime, 0, function()
-        if not self:IsActiveRaid() then return end
-        self:SetNWBool("ActiveRaid", false)
+        if not self:GetIsActiveRaid() then return end
+
+        self:SetIsActiveRaid(false)
         ply:SetNWBool("ActiveBankRaid", false)
-        self:setTotalMoney(BANK_SYSTEM.Config.MaxReward)
+        self:SetTotalMoney(BANK_SYSTEM.Config.MaxReward)
+
         BANK_SYSTEM.RunEveryoneConsole("stopsound")
-        DarkRP.notify(ply, 0, 4, string.format(BANK_SYSTEM.Config.Phrases.PAID, DarkRP.formatMoney(math.floor(self:TotalMoney()))))
-        ply:addMoney(self:TotalMoney())
+        DarkRP.notify(ply, 0, 4, string.format(BANK_SYSTEM.Config.Phrases.PAID, DarkRP.formatMoney(math.floor(self:GetTotalMoney()))))
+        
+        ply:addMoney(self:GetTotalMoney())
         hook.Run("WKBankRobberyEnded", ply, self, amount)
-        self:SetNWBool("BankVaultCooldownActive", true)
+        
+        self:SetIsCoolDown(true)
 
         timer.Create("BankVaultCooldownTimer", BANK_SYSTEM.Config.RobberyCooldown, 0, function()
-            self:SetNWBool("BankVaultCooldownActive", false)
+            self:SetIsCoolDown(false)
         end)
     end)
 end
 
 function ENT:Think()
-    if self:IsOnCoolDown() then
-        self:SetNWInt("BankVaultCooldownTimer", timer.TimeLeft("BankVaultCooldownTimer"))
+    if self:GetIsCoolDown() then
+        self:SetCoolDown(timer.TimeLeft("BankVaultCooldownTimer"))
     end
 
-    if self:IsActiveRaid() then
-        self:SetNWInt("BankVaultRaidActiveTimer", timer.TimeLeft("BankVaultRaidTimer"))
+    if self:GetIsActiveRaid() then
+        self:SetActiveRaidTimer(timer.TimeLeft("BankVaultRaidTimer"))
     end
 end
 
 function ENT:OnTakeDamage(damageInfo)
-    if not self:IsActiveRaid() then return end
-    local randomDamage = math.random(1000, 4500)
-    self:setTotalMoney(self:GetNWInt("BankVaultTotalMoney") - randomDamage)
+    if not self:GetIsActiveRaid() then return end
 
-    if self:TotalMoney() <= 0 then
-        self:SetNWBool("BankVaultCooldownActive", true)
-        self:SetNWBool("ActiveRaid", false)
-        self:setTotalMoney(BANK_SYSTEM.MaxReward)
-        BANK_SYSTEM.RunEveryoneConsole("stopsound")
+    local randomDamage = math.random(1000, 4500)
+    self:SetTotalMoney(math.Clamp(self:GetTotalMoney() - randomDamage, -1, 100000))
+
+    if self:GetTotalMoney() == -1 then
+        self:SetIsActiveRaid(false)
+        self:SetIsCoolDown(true)
+        self:SetTotalMoney(BANK_SYSTEM.Config.MaxReward)
 
         timer.Create("BankVaultCooldownTimer", BANK_SYSTEM.Config.RobberyCooldown, 0, function()
-            self:SetNWBool("BankVaultCooldownActive", false)
+            self:SetIsCoolDown(false)
         end)
+
+        BANK_SYSTEM.RunEveryoneConsole("stopsound")
     end
 end
