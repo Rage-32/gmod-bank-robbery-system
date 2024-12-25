@@ -12,4 +12,5 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int", 2, "ActiveRaidTimer")
 	self:NetworkVar("Bool", 1, "IsActiveRaid")
 	self:NetworkVar("Int", 3, "TotalMoney")
+	self:NetworkVar("Entity", 1, "RobberyStarter")
 end
