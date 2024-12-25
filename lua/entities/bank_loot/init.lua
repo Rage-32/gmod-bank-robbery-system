@@ -42,7 +42,9 @@ function ENT:Use(ply)
         if not IsValid(self) then return end
         if not self:GetIsActiveRaid() then return end
 
-        DarkRP.notify(ply, 0, 4, string.format(BANK_SYSTEM.Config.Phrases.PAID, DarkRP.formatMoney(math.floor(self:GetTotalMoney()))))
+        if IsValid(ply) then
+            DarkRP.notify(ply, 0, 4, string.format(BANK_SYSTEM.Config.Phrases.PAID, DarkRP.formatMoney(math.floor(self:GetTotalMoney()))))
+        emd
 
         BANK_SYSTEM.EndRobbery(ply, self)
         BANK_SYSTEM.StartCooldown(self)
