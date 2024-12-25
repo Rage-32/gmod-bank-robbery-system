@@ -6,7 +6,7 @@ function BANK_SYSTEM.StartRobbery(ply, ent)
     ent:SetActiveRaidTimer(CurTime() + BANK_SYSTEM.Config.RobberyTime)
     ply:SetNWBool("ActiveBankRaid", true)
 
-    hook.Run("BANK_ROBBERY.RobberyStarted", ply, self, amount)
+    hook.Run("BANK_ROBBERY.RobberyStarted", ply, self, ent:GetTotalMoney())
 end
 
 function BANK_SYSTEM.EndRobbery(ply, ent)
@@ -24,7 +24,7 @@ function BANK_SYSTEM.EndRobbery(ply, ent)
         ply:addMoney(ent:GetTotalMoney())
     end
 
-    hook.Run("BANK_ROBBERY.RobberyEnded", ply, ent, amount)
+    hook.Run("BANK_ROBBERY.RobberyEnded", ply, ent)
 end
 
 function BANK_SYSTEM.StartCooldown(ent)
