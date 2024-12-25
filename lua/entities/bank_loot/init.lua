@@ -36,15 +36,9 @@ function ENT:Use(ply)
         BANK_SYSTEM.NotifyAllCops(BANK_SYSTEM.Config.Phrases.BANKRAID)
     end
     
-    self:EmitSound("ambient/alarms/alarm1.wav")
+    BANK_SYSTEM.StartRobbery(ply, self)
 
-    self:SetIsActiveRaid(true)
-    self:SetActiveRaidTimer(CurTime() + BANK_SYSTEM.Config.RobberyTime)
-    ply:SetNWBool("ActiveBankRaid", true)
-
-    hook.Run("BANK_ROBBERY.RobberyStarted", ply, self, amount)
-
-    timer.Create("BankVaultRaidTimer", BANK_SYSTEM.Config.RobberyTime, 0, function()
+    timer.Create("BankVaultRaidTimer." .. self:GetCreationID(), BANK_SYSTEM.Config.RobberyTime, 0, function()
         if not IsValid(self) then return end
         if not self:GetIsActiveRaid() then return end
 
