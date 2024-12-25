@@ -44,7 +44,7 @@ function ENT:Use(ply)
 
         if IsValid(ply) then
             DarkRP.notify(ply, 0, 4, string.format(BANK_SYSTEM.Config.Phrases.PAID, DarkRP.formatMoney(math.floor(self:GetTotalMoney()))))
-        emd
+        end
 
         BANK_SYSTEM.EndRobbery(ply, self)
         BANK_SYSTEM.StartCooldown(self)
@@ -53,19 +53,12 @@ end
 
 function ENT:OnTakeDamage(damageInfo)
     if not self:GetIsActiveRaid() then return end
+    if not IsValid(damageInfo:GetAttacker()) then return end
 
     local randomDamage = math.random(1000, 4500)
-    self:SetTotalMoney(math.Clamp(self:GetTotalMoney() - randomDamage, -1, 100000))
+    self:SetTotalMoney(math.Clamp(self:GetTotalMoney() - randomDamage, -1, BANK_SYSTEM.Config.MaxReward))
 
-    if self:GetTotalMoney() == -1 then
-        self:SetIsActiveRaid(false)
-        self:SetIsCoolDown(true)
-        self:SetTotalMoney(BANK_SYSTEM.Config.MaxReward)
-
-        timer.Create("BankVaultCooldownTimer", BANK_SYSTEM.Config.RobberyCooldown, 0, function()
-            self:SetIsCoolDown(false)
-        end)
-
-        BANK_SYSTEM.RunEveryoneConsole("stopsound")
+    if self:GetTotalMoney() <= -1 then
+        BANK_SYSTEM.EndRobbery(self:GetRobberyStarter(), self)
     end
 end
