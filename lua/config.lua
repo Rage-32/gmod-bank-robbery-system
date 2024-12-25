@@ -1,4 +1,4 @@
-BANK_SYSTEM.Config = {}
+BANK_SYSTEM.Config = BANK_SYSTEM.Config or {}
 
 BANK_SYSTEM.Config.MaxReward = 100000 -- Max reward a player can get from robbing a bank
 
